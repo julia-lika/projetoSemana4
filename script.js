@@ -10,7 +10,7 @@ this.config = {
     },
   },
 
-  scenes: [Menu, Jogo]
+  scene: [Menu, Jogo]
 };
 
 var game_obj = new Phaser.Game(this.config);
