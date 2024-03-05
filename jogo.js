@@ -3,6 +3,7 @@ class Jogo extends Phaser.Scene {
     super({ key: "Jogo" });
   }
 
+  // Variáveis
   cursors;
   macas;
   placar;
@@ -11,6 +12,7 @@ class Jogo extends Phaser.Scene {
   cow;
 
   preload() {
+    // Carrega os assets do jogo
     this.load.tilemapTiledJSON("mapa", "assets/mapa.json");
     this.load.image("grama", "assets/Grass.png");
     this.load.spritesheet("bunny", "assets/Basic Charakter Spritesheet.png", {
@@ -26,10 +28,11 @@ class Jogo extends Phaser.Scene {
   }
 
   create() {
+    // Criação do jogo
+
+    // Cria o mapa
     this.mapa = this.make.tilemap({ key: "mapa" });
-
     this.tilesetGrama = this.mapa.addTilesetImage("Grass", "grama");
-
     this.chao = this.mapa.createLayer("chao", this.tilesetGrama, 0, 0);
 
     // Configura o mundo de física do jogo
@@ -50,7 +53,7 @@ class Jogo extends Phaser.Scene {
 
     this.cursors = this.input.keyboard.createCursorKeys();
 
-    // Animar
+    // Configura as animações
     this.anims.create({
       key: "down",
       frames: this.anims.generateFrameNumbers("bunny", {
@@ -91,10 +94,10 @@ class Jogo extends Phaser.Scene {
       repeat: -1,
     });
 
+    // Grupo de árvores estáticas
     this.arvore = this.physics.add.staticGroup();
 
     this.listaArvores = [
-      //  Now let's create some ledges
       this.arvore.create(50, 50, "arvore"),
       this.arvore.create(128, 50, "arvore"),
       this.arvore.create(206, 50, "arvore"),
@@ -104,16 +107,16 @@ class Jogo extends Phaser.Scene {
       this.arvore.create(128, 210, "arvore"),
       this.arvore.create(206, 210, "arvore"),
     ];
-    console.log(this.listaArvores);
 
+    // Colisão com árvores
     this.physics.add.collider(this.bunny, this.arvore);
 
-    // Configuração da moeda
+    // Configuração da maçã
     this.maca = this.physics.add.sprite(128, 128, "maca");
-    this.maca.setCollideWorldBounds(true); // Colisão com os limites do mundo
-    this.maca.setBounce(0.7); // Elasticidade da maca
+    this.maca.setCollideWorldBounds(true);
+    this.maca.setBounce(0.7);
 
-    // Adiciona o placar
+    // Placar
     this.placar = this.add
       .text(50, 50, "Maçãs:" + this.pontuacao, {
         fontSize: "15px",
@@ -123,21 +126,21 @@ class Jogo extends Phaser.Scene {
 
     // Detecta colisão entre o bunny e a maca
     this.physics.add.overlap(this.bunny, this.maca, () => {
-      this.maca.setVisible(false); // Maça fica "invisível"
+      this.maca.setVisible(false);
 
-      // Define uma nova posição para a maca
+      // Define nova posição para a maçã
       this.posicaoMaca_Y = Phaser.Math.RND.between(40, 230);
       this.maca.setPosition(this.posicaoMaca_Y, 100);
 
-      this.pontuacao += 1; // Soma pontuação
-      this.placar.setText("Maçãs:" + this.pontuacao); // Atualiza o texto do placar
-
-      this.maca.setVisible(true); // Torna a maca visível novamente
+      this.pontuacao += 1;
+      this.placar.setText("Maçãs:" + this.pontuacao);
+      
+      this.maca.setVisible(true);
     });
   }
 
   update() {
-    // Atualizar movimento do personagem baseado nos controles do teclado
+    // Atualiza movimento do personagem baseado nos controles do teclado
     var directions = ["left", "right", "up", "down"];
 
     for (var i = 0; i < directions.length; i++) {
