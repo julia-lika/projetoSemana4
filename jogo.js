@@ -8,17 +8,21 @@ class Jogo extends Phaser.Scene {
   placar;
   pontuacao = 0;
   bunny;
+  cow;
 
   preload() {
     this.load.tilemapTiledJSON("mapa", "assets/mapa.json");
     this.load.image("grama", "assets/Grass.png");
-    this.load.spritesheet(
-      "bunny",
-      "assets/Basic Charakter Spritesheet.png",
-      { frameWidth: 48, frameHeight: 48 }
-    );
+    this.load.spritesheet("bunny", "assets/Basic Charakter Spritesheet.png", {
+      frameWidth: 48,
+      frameHeight: 48,
+    });
     this.load.image("maca", "assets/apple.png");
     this.load.image("arvore", "assets/arvore.png");
+    this.load.spritesheet("cow", "assets/Free Cow Sprites.png", {
+      frameWidth: 49,
+      frameHeight: 49,
+    });
   }
 
   create() {
@@ -134,23 +138,25 @@ class Jogo extends Phaser.Scene {
 
   update() {
     // Atualizar movimento do personagem baseado nos controles do teclado
-    if (this.cursors.left.isDown) {
-      this.bunny.body.setVelocityX(-110);
-      // Ativar animação
-      this.bunny.anims.play("left", true);
-    } else if (this.cursors.right.isDown) {
-      this.bunny.body.setVelocityX(110);
-      // Ativar animação
-      this.bunny.anims.play("right", true);
-    } else if (this.cursors.up.isDown) {
-      this.bunny.body.setVelocityY(-110);
-      // Ativar animação
-      this.bunny.anims.play("up", true);
-    } else if (this.cursors.down.isDown) {
-      this.bunny.body.setVelocityY(110);
-      // Ativar animação
-      this.bunny.anims.play("down", true);
-    } else {
+    var directions = ["left", "right", "up", "down"];
+
+    for (var i = 0; i < directions.length; i++) {
+      var direction = directions[i];
+      var velocity = 0;
+
+      if (this.cursors[direction].isDown) {
+        velocity = direction === "left" || direction === "up" ? -110 : 110;
+        this.bunny.body.setVelocity(
+          direction === "left" || direction === "right" ? velocity : 0,
+          direction === "up" || direction === "down" ? velocity : 0
+        );
+        this.bunny.anims.play(direction, true);
+        break; // Interrompe o loop ao encontrar a primeira tecla pressionada
+      }
+    }
+
+    // Se nenhuma tecla estiver pressionada, parar a animação e a velocidade
+    if (velocity === 0) {
       this.bunny.setVelocityX(0);
       this.bunny.setVelocityY(0);
       this.bunny.anims.stop();
